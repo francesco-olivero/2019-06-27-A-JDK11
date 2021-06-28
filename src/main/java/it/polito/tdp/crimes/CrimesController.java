@@ -5,7 +5,10 @@
 package it.polito.tdp.crimes;
 
 import java.net.URL;
+import java.util.List;
 import java.util.ResourceBundle;
+
+import org.jgrapht.graph.DefaultWeightedEdge;
 
 import it.polito.tdp.crimes.model.Model;
 import javafx.event.ActionEvent;
@@ -34,7 +37,7 @@ public class CrimesController {
     private Button btnAnalisi; // Value injected by FXMLLoader
 
     @FXML // fx:id="boxArco"
-    private ComboBox<?> boxArco; // Value injected by FXMLLoader
+    private ComboBox<DefaultWeightedEdge> boxArco; // Value injected by FXMLLoader
 
     @FXML // fx:id="btnPercorso"
     private Button btnPercorso; // Value injected by FXMLLoader
@@ -46,12 +49,33 @@ public class CrimesController {
     void doCreaGrafo(ActionEvent event) {
     	txtResult.clear();
     	txtResult.appendText("Crea grafo...\n");
+    	
+    	String categoria = this.boxCategoria.getValue();
+    	int anno = this.boxAnno.getValue();
+    	this.txtResult.appendText(this.model.creaGrafo(categoria, anno));
+    	this.txtResult.appendText("\n\n");
+    	for (String ss: this.model.archiPesoMax()) {
+    		this.txtResult.appendText(ss);
+    	}
+    	this.boxArco.getItems().clear();
+    	this.boxArco.getItems().addAll(this.model.getAllEdges());
     }
 
     @FXML
     void doCalcolaPercorso(ActionEvent event) {
     	txtResult.clear();
     	txtResult.appendText("Calcola percorso...\n");
+    	
+    	DefaultWeightedEdge dwe = this.boxArco.getValue();
+    	String partenza = this.model.getGrafo().getEdgeSource(dwe);
+    	String arrivo = this.model.getGrafo().getEdgeTarget(dwe);
+    	
+    	this.txtResult.appendText("\n\npercorso migliore: \n");
+    	List<String> res = this.model.percorsoMigliore(partenza, arrivo);
+    	for (String sr : res) {
+    		this.txtResult.appendText(sr+"\n");
+    	}
+    	this.txtResult.appendText("peso tot percorso: "+this.model.getPesoBest());
     }
 
     @FXML // This method is called by the FXMLLoader when initialization is complete

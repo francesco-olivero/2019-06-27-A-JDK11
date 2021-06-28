@@ -6,6 +6,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+
+import it.polito.tdp.crimes.model.Arco;
 import it.polito.tdp.crimes.model.Event;
 
 
@@ -99,6 +101,37 @@ public class EventsDao {
 			
 			while(res.next()) {
 				list.add(res.getString("offense_type_id"));
+			}
+			
+			conn.close();
+			return list ;
+
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return null ;
+		}
+	}
+	
+	public List<Arco> getArchi(String categoria, int anno){
+		String sql = "SELECT e1.offense_type_id, e2.offense_type_id, COUNT(distinct e1.district_id) as tot "
+				+ "FROM events e1, events e2 "
+				+ "WHERE e1.offense_type_id>e2.offense_type_id AND e1.incident_id>e2.incident_id AND e1.district_id=e2.district_id AND e1.offense_category_id=e2.offense_category_id AND e1.offense_category_id=? AND YEAR(e1.reported_date)=YEAR(e2.reported_date) AND YEAR(e2.reported_date)=? "
+				+ "GROUP BY e1.offense_type_id, e2.offense_type_id" ;
+		try {
+			Connection conn = DBConnect.getConnection() ;
+
+			PreparedStatement st = conn.prepareStatement(sql) ;
+			st.setString(1, categoria);
+			st.setInt(2, anno);
+			
+			List<Arco> list = new ArrayList<>() ;
+			
+			ResultSet res = st.executeQuery() ;
+			
+			while(res.next()) {
+				Arco a =  new Arco(res.getString("e1.offense_type_id"), res.getString("e2.offense_type_id"), res.getInt("tot"));
+				list.add(a);
 			}
 			
 			conn.close();

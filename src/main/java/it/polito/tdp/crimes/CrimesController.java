@@ -25,10 +25,10 @@ public class CrimesController {
     private URL location;
 
     @FXML // fx:id="boxCategoria"
-    private ComboBox<?> boxCategoria; // Value injected by FXMLLoader
+    private ComboBox<String> boxCategoria; // Value injected by FXMLLoader
 
     @FXML // fx:id="boxAnno"
-    private ComboBox<?> boxAnno; // Value injected by FXMLLoader
+    private ComboBox<Integer> boxAnno; // Value injected by FXMLLoader
 
     @FXML // fx:id="btnAnalisi"
     private Button btnAnalisi; // Value injected by FXMLLoader
@@ -67,5 +67,11 @@ public class CrimesController {
     
     public void setModel(Model model) {
     	this.model = model;
+    	for (String s: this.model.getCategoryEvents()) {
+    		this.boxCategoria.getItems().add(s);
+    	}
+    	for (int i=2014; i<=2017; i++) {
+    		this.boxAnno.getItems().add(i);
+    	}
     }
 }

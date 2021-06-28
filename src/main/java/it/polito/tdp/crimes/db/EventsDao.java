@@ -53,5 +53,37 @@ public class EventsDao {
 			return null ;
 		}
 	}
+	
+	
+	public List<String> getVertici(String categoria, int anno){
+		String sql = "SELECT distinct offense_type_id "
+				+ "FROM events "
+				+ "WHERE offense_category_id=? AND YEAR(reported_date)=?" ;
+		try {
+			Connection conn = DBConnect.getConnection() ;
+
+			PreparedStatement st = conn.prepareStatement(sql) ;
+			st.setString(1, categoria);
+			st.setInt(2, anno);
+			
+			List<String> list = new ArrayList<>() ;
+			
+			ResultSet res = st.executeQuery() ;
+			
+			while(res.next()) {
+				list.add(res.getString("offense_category_id"));
+			}
+			
+			conn.close();
+			return list ;
+
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return null ;
+		}
+	}
+	
+
 
 }

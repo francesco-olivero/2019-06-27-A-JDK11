@@ -54,6 +54,33 @@ public class EventsDao {
 		}
 	}
 	
+	public List<String> getCategoryEvents(){
+		String sql = "SELECT distinct offense_category_id "
+				+ "FROM events "
+				+ "ORDER BY offense_category_id ASC" ;
+		try {
+			Connection conn = DBConnect.getConnection() ;
+
+			PreparedStatement st = conn.prepareStatement(sql) ;
+		
+			List<String> list = new ArrayList<>() ;
+			
+			ResultSet res = st.executeQuery() ;
+			
+			while(res.next()) {
+				list.add(res.getString("offense_category_id"));
+			}
+			
+			conn.close();
+			return list ;
+
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return null ;
+		}
+	}
+	
 	
 	public List<String> getVertici(String categoria, int anno){
 		String sql = "SELECT distinct offense_type_id "
@@ -71,7 +98,7 @@ public class EventsDao {
 			ResultSet res = st.executeQuery() ;
 			
 			while(res.next()) {
-				list.add(res.getString("offense_category_id"));
+				list.add(res.getString("offense_type_id"));
 			}
 			
 			conn.close();
